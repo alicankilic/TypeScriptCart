@@ -15,6 +15,7 @@ import { Badge } from "@material-ui/core";
 //Styles
 
 import { Wrapper } from "./App.styles";
+import { StyledButton } from "./App.styles";
 // Types
 
 export interface CartItemType {
@@ -36,6 +37,8 @@ const getProducts = async (): Promise<CartItemType[]> => {
 };
 
 const App: React.FC = () => {
+  const [cartOpen,setCartOpen] = useState<boolean>(false);
+  const [cartItems,setCartItems] = useState<CartItemType[]>([])
   const { data, isLoading, error } = useQuery<CartItemType[]>(
     "products",
     getProducts
@@ -44,7 +47,11 @@ const App: React.FC = () => {
  
   console.log(data);
    
-  const getTotalItems =  () => null;
+  const getTotalItems =  (items:CartItemType[]) =>{
+    return (
+      items.reduce((ack:number,item) => ack+item.amount,0)
+    )
+  };
   const handleAddToCart = (clickedItem:CartItemType) => null;
 
   const handleRemoveCart = () => null;   
@@ -54,6 +61,14 @@ const App: React.FC = () => {
 
   return(
     <Wrapper>
+      <Drawer anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
+        Cart goes Here
+      </Drawer>
+       <StyledButton onClick={() => setCartOpen(true)}>
+         <Badge badgeContent={getTotalItems(cartItems)} color="error">
+           <AddShoppingCartIcon/>
+         </Badge>
+       </StyledButton>
        <Grid container spacing={3}>
          {data?.map((item:CartItemType) => {
            return(
