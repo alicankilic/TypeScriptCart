@@ -8,4 +8,4 @@ export const Wrapper = styled.aside`
   padding:20px;
 
 
-`
+`;
