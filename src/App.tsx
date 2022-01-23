@@ -42,7 +42,6 @@ const App: React.FC = () => {
     "products",
     getProducts
   );
- 
 
   console.log(data);
 
@@ -50,12 +49,18 @@ const App: React.FC = () => {
     return items.reduce((ack: number, item) => ack + item.amount, 0);
   };
   const handleAddToCart = (clickedItem: CartItemType) => {
-    setCartItems(
-      (previous) => {
-          const isItemInCart = previous.find(item => item.id === clickedItem.id);
-          
+    setCartItems((previous) => {
+      const isItemInCart = previous.find((item) => item.id === clickedItem.id);
+      if (isItemInCart) {
+        return previous.map((item: CartItemType) => {
+          return item.id === clickedItem.id
+            ? { ...item, amount: item.amount + 1 }
+            : item;
+        });
       }
-    )
+
+      return [...previous, { ...clickedItem, amount: 1 }];
+    });
   };
 
   const handleRemoveCart = () => null;
