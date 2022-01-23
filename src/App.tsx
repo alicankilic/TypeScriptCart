@@ -5,12 +5,11 @@ import { useQuery } from "react-query";
 //Components
 import Item from "./Item/Item";
 import Drawer from "@material-ui/core/Drawer";
+import Cart from "./Cart/Cart";
 import { LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import { Badge } from "@material-ui/core";
-
-
 
 //Styles
 
@@ -37,50 +36,58 @@ const getProducts = async (): Promise<CartItemType[]> => {
 };
 
 const App: React.FC = () => {
-  const [cartOpen,setCartOpen] = useState<boolean>(false);
-  const [cartItems,setCartItems] = useState<CartItemType[]>([])
+  const [cartOpen, setCartOpen] = useState<boolean>(false);
+  const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const { data, isLoading, error } = useQuery<CartItemType[]>(
     "products",
     getProducts
   );
-
  
+
   console.log(data);
-   
-  const getTotalItems =  (items:CartItemType[]) =>{
-    return (
-      items.reduce((ack:number,item) => ack+item.amount,0)
+
+  const getTotalItems = (items: CartItemType[]) => {
+    return items.reduce((ack: number, item) => ack + item.amount, 0);
+  };
+  const handleAddToCart = (clickedItem: CartItemType) => {
+    setCartItems(
+      (previous) => {
+          const isItemInCart = previous.find(item => item.id === clickedItem.id);
+          
+      }
     )
   };
-  const handleAddToCart = (clickedItem:CartItemType) => null;
 
-  const handleRemoveCart = () => null;   
+  const handleRemoveCart = () => null;
 
-  if(isLoading) return <LinearProgress />;
-  if(error) return <div>Something Went Wrong</div>;
+  if (isLoading) return <LinearProgress />;
+  if (error) return <div>Something Went Wrong</div>;
 
-  return(
+  return (
     <Wrapper>
       <Drawer anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
-        Cart goes Here
+        <Cart
+          cartItems={cartItems}
+          addToCart={handleAddToCart}
+          removeFromCart={handleRemoveCart}
+        />
       </Drawer>
-       <StyledButton onClick={() => setCartOpen(true)}>
-         <Badge badgeContent={getTotalItems(cartItems)} color="error">
-           <AddShoppingCartIcon/>
-         </Badge>
-       </StyledButton>
-       <Grid container spacing={3}>
-         {data?.map((item:CartItemType) => {
-           return(
-             <Grid item key={item.id} xs={12} sm={4}>
-               <Item item={item} handleAddToCart={handleAddToCart} />
+      <StyledButton onClick={() => setCartOpen(true)}>
+        <Badge badgeContent={getTotalItems(cartItems)} color="error">
+          <AddShoppingCartIcon />
+        </Badge>
+      </StyledButton>
+      <Grid container spacing={3}>
+        {data?.map((item: CartItemType) => {
+          return (
+            <Grid item key={item.id} xs={12} sm={4}>
+              <Item item={item} handleAddToCart={handleAddToCart} />
             </Grid>
-           )
-         } )}
-       </Grid>
+          );
+        })}
+      </Grid>
     </Wrapper>
-  )
-    
+  );
 };
 
 export default App;
