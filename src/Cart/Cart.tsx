@@ -1,5 +1,7 @@
 import React from "react";
 import CartItem from "../CartItem/CartItem";
+import Button from "@material-ui/core/Button";
+
 
 //Styles
 import { Wrapper } from "./Cart.styles";
@@ -13,6 +15,17 @@ interface Props {
 }
 
 const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart }) => {
+  
+  const calculateTotalMoney  = (items:CartItemType[]) => {
+      return(
+          items.reduce((ack:number,items) => {
+            return ack+items.amount*items.price;
+          },0)
+      )
+  }
+
+
+
   return (
     <Wrapper>
       <h2>Your Shopping Cart</h2>
@@ -27,6 +40,10 @@ const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart }) => {
           />
         );
       })}
+      <div>
+          <strong>Total Price Of The Cart</strong>
+          <Button variant="text" size="small">Price : ${calculateTotalMoney(cartItems).toFixed(3)}</Button>
+      </div>
     </Wrapper>
   );
 };
